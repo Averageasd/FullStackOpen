@@ -9,12 +9,6 @@ async function getAllPersons() {
 async function addNewPerson(newPerson) {
   await axios.post(baseUrl, newPerson);
 }
-
-async function getPersonByName(name) {
-  const person = await axios.get(`${baseUrl}?name=${name}`);
-  return person.data;
-}
-
 async function deletePerson(id) {
   await axios.delete(`${baseUrl}/${id}`);
 }
@@ -26,7 +20,6 @@ async function updatePerson(id, personObject) {
 export default {
   getAllPersons,
   addNewPerson,
-  getPersonByName,
   deletePerson,
   updatePerson,
 };

@@ -1,39 +1,9 @@
 {
   "persons": [
     {
-      "name": "Ada Lovelace",
-      "number": "123456789",
-      "id": "2"
-    },
-    {
-      "name": "Dan Abramov",
-      "number": "12-43-234345",
-      "id": "3"
-    },
-    {
-      "id": "dc341d89-1c8a-48d7-9f7d-e65c264dd07a",
-      "name": "aa",
-      "number": "123567"
-    },
-    {
-      "id": "a63c1e04-8901-4caa-89ad-c574c1e01e0e",
-      "name": "af",
-      "number": "123467"
-    },
-    {
-      "id": "979d0bf6-f857-482b-b0fd-f6a27736092b",
-      "name": "king",
-      "number": "123456"
-    },
-    {
-      "id": "e777c807-169f-471f-acbb-7a3634e35ef1",
-      "name": "King",
-      "number": "111111111"
-    },
-    {
-      "id": "5866f584-fdd6-422b-a686-e35fdbfe8635",
-      "name": "yt",
-      "number": "1233535"
+      "name": "Yo",
+      "id": "3",
+      "number": "33333333"
     }
   ]
 }

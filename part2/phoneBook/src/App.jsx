@@ -4,17 +4,16 @@ import personService from "./services/personService";
 import FilterByNameForm from "./FilterByNameForm";
 import Persons from "./Persons";
 import AddPersonForm from "./AddPersonForm";
+import Notification from "./Notification";
+import notificationTypeConstants from "./constants/NotificationType";
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: "Arto Hellas", number: "040-123456", id: uuidv4() },
-    { name: "Ada Lovelace", number: "39-44-5323523", id: uuidv4() },
-    { name: "Dan Abramov", number: "12-43-234345", id: uuidv4() },
-    { name: "Mary Poppendieck", number: "39-23-6423122", id: uuidv4() },
-  ]);
+  const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [notificationMessage, setNotificationMessage] = useState("");
+  const [notificationType, setNotificationType] = useState("");
 
   useEffect(() => {
     getPersons();
@@ -26,18 +25,21 @@ const App = () => {
       persons = filterPersonsWithName(persons);
       setPersons(persons);
     } catch (error) {
-      alert("Fail to fetch persons!");
+      createNotification(
+        notificationTypeConstants.ERROR,
+        "Failed to fetch persons"
+      );
     }
   }
 
   async function addNewPerson() {
+    const newPerson = {
+      id: uuidv4(),
+      name: newName,
+      number: newNumber,
+    };
     try {
-      const newPerson = {
-        id: uuidv4(),
-        name: newName,
-        number: newNumber,
-      };
-      const personWithName = await getPersonByName(newName);
+      const personWithName = getPersonByName(newName);
       if (personWithName) {
         if (
           window.confirm(
@@ -52,10 +54,17 @@ const App = () => {
         return;
       }
       await personService.addNewPerson(newPerson);
+      createNotification(
+        notificationTypeConstants.SUCCESS,
+        `Added ${newPerson.name}`
+      );
       resetInputFields();
       await getPersons();
     } catch (error) {
-      alert("failed to save new person!");
+      createNotification(
+        notificationTypeConstants.SUCCESS,
+        `Failed to save ${newPerson.name}`
+      );
     }
   }
 
@@ -69,29 +78,46 @@ const App = () => {
       await personService.updatePerson(id, personObject);
       resetInputFields();
       await getPersons();
+      createNotification(
+        notificationTypeConstants.SUCCESS,
+        `Updated ${personObject.name}`
+      );
     } catch (error) {
-      alert("failed to update person!");
+      createNotification(
+        notificationTypeConstants.ERROR,
+        `Information of ${personObject.name} has already been removed from the phonebook`
+      );
+      await getPersons();
     }
   }
   async function deletePerson(id) {
     try {
       await personService.deletePerson(id);
+      createNotification(
+        notificationTypeConstants.SUCCESS,
+        `Deleted person with id ${id}`
+      );
       await getPersons();
     } catch (error) {
-      alert("failed to delete person!");
+      createNotification(
+        notificationTypeConstants.ERROR,
+        `Failed to deleted person with id ${id}`
+      );
     }
   }
 
-  async function getPersonByName(newName) {
-    try {
-      const personWithName = await personService.getPersonByName(newName);
-      if (personWithName.length > 0) {
-        return personWithName[0];
-      }
-      return null;
-    } catch (error) {
-      alert("failed to fetch person!");
-    }
+  function getPersonByName(newName) {
+    const personWithName = persons.find((person) => person.name === newName);
+    return personWithName;
+  }
+
+  function createNotification(type, message) {
+    setNotificationType(type);
+    setNotificationMessage(message);
+    setTimeout(() => {
+      setNotificationType("");
+      setNotificationMessage("");
+    }, 5000);
   }
 
   function filterPersonsWithName(persons) {
@@ -105,6 +131,10 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification
+        type={notificationType}
+        message={notificationMessage}
+      ></Notification>
       <FilterByNameForm searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       <AddPersonForm
         addNewPerson={addNewPerson}
